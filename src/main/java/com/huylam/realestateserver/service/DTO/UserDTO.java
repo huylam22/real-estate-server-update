@@ -4,6 +4,7 @@ import com.huylam.realestateserver.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +16,7 @@ public class UserDTO {
   private String firstName;
   private String lastName;
 
+  @Autowired
   public UserDTO(User user) {
     this.username = user.getUsername();
     this.email = user.getEmail();
