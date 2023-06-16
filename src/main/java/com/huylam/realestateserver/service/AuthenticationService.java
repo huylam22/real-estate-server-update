@@ -29,19 +29,28 @@ public class AuthenticationService {
   @Autowired
   private final UserRepository repository;
 
+  @Autowired
   private final TokenRepository tokenRepository;
+
+  @Autowired
   private final PasswordEncoder passwordEncoder;
+
+  @Autowired
   private final JwtService jwtService;
+
+  @Autowired
   private final AuthenticationManager authenticationManager;
 
   public AuthenticationResponse register(RegisterRequest request) {
+    Role defaultRole = Role.USER;
+    Role userRole = request.getRole() != null ? request.getRole() : defaultRole;
     var user = User
       .builder()
       .firstname(request.getFirstname())
       .lastname(request.getLastname())
       .email(request.getEmail())
       .password(passwordEncoder.encode(request.getPassword()))
-      .role(Role.USER)
+      .role(userRole)
       .build();
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);

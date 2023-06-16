@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 @NoArgsConstructor
@@ -42,6 +43,7 @@ public class PropertyDTO {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
   private LocalDateTime createdDate;
 
+  @Autowired
   public PropertyDTO(Property property) {
     this.id = property.getId();
     this.propertyAddressNumber = property.getPropertyAddressNumber();

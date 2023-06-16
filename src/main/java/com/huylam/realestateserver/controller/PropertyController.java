@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-@RequestMapping("api/v1/properties")
+@RequestMapping("/api/v1")
 public class PropertyController {
 
   @Autowired
@@ -56,7 +56,26 @@ public class PropertyController {
   @Autowired
   UserRepository userRepository;
 
-  @GetMapping
+  @Operation(
+    summary = "Get all properties",
+    description = "Returns all properties with specified DTO format",
+    tags = { "property-controller" }
+  )
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "successful operation",
+        content = @Content(schema = @Schema(implementation = Property.class))
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Error",
+        content = @Content
+      ),
+    }
+  )
+  @GetMapping({ "/properties", "/properties/" })
   public ResponseEntity<List<PropertyDTO>> getAllProperties() {
     try {
       List<PropertyDTO> propertyDTOs =
@@ -92,7 +111,7 @@ public class PropertyController {
       ),
     }
   )
-  @GetMapping("/details/{propertyId}")
+  @GetMapping("/properties/details/{propertyId}")
   public ResponseEntity<Object> getPropertyById(
     @PathVariable(value = "propertyId", required = true) long id
   ) {
@@ -113,7 +132,7 @@ public class PropertyController {
     }
   }
 
-  @GetMapping("/{propertyId}")
+  @GetMapping("/properties/{propertyId}")
   public ResponseEntity<PropertyDTO> getProperty(
     @PathVariable long propertyId
   ) {
@@ -127,7 +146,7 @@ public class PropertyController {
     }
   }
 
-  @GetMapping("/{propertyId}/similar")
+  @GetMapping("/properties/{propertyId}/similar")
   public ResponseEntity<List<PropertyDTO>> getSimilarProperties(
     @PathVariable(value = "propertyId", required = true) long id
   ) {
@@ -282,7 +301,7 @@ public class PropertyController {
   }
 
   // Xoá/delete tất cả  KHÔNG dùng service, sử dụng phương thức DELETE
-  @DeleteMapping("/employees/delete-all") // Dùng phương thức DELETE
+  @DeleteMapping("/admin/delete-all") // Dùng phương thức DELETE
   public ResponseEntity<Property> deleteAllProperties() {
     try {
       propertyRepository.deleteAll();

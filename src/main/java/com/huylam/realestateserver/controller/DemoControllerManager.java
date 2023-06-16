@@ -1,6 +1,6 @@
 package com.huylam.realestateserver.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -8,25 +8,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/admin")
-@PreAuthorize("hasRole('ADMIN')")
-public class DemoController {
+@RequestMapping("/api/v1/management")
+public class DemoControllerManager {
 
   @GetMapping
-  @PreAuthorize("hasAuthority('admin:read')")
   public String get() {
-    return "GET:: admin controller";
+    return "GET:: management controller";
   }
 
   @PostMapping
-  @PreAuthorize("hasAuthority('admin:create')")
   public String post() {
-    return "CREATE:: admin controller";
+    return "POST:: management controller";
   }
 
   @PutMapping
-  @PreAuthorize("hasAuthority('admin:update')")
   public String put() {
-    return "UPDATE:: admin controller";
+    return "PUT:: management controller";
+  }
+
+  @DeleteMapping
+  public String delete() {
+    return "DELETE:: management controller";
   }
 }
