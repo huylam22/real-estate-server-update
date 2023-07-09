@@ -25,6 +25,10 @@ public class PropertyService {
   private final ProvinceRepository provinceRepository;
   private final DistrictRepository districtRepository;
 
+  public long countAllPropertiesService() {
+    return propertyRepository.count();
+  }
+
   public ArrayList<Property> getAllPropertiesService() {
     ArrayList<Property> listProperty = new ArrayList<Property>();
     propertyRepository.findAll().forEach(listProperty::add);
@@ -41,12 +45,12 @@ public class PropertyService {
   }
 
   public PropertyDTO getPropertyDTOByIdService(Long id) {
-    Property property = propertyRepository
-      .findById(id)
-      .orElseThrow(() ->
-        new EntityNotFoundException("Property not found with id " + id)
-      );
-    return new PropertyDTO(property);
+    Optional<Property> propertyData = propertyRepository.findById(id);
+    if (propertyData.isPresent()) {
+      Property property = propertyData.get();
+      return new PropertyDTO(property);
+    }
+    return null; // or return an empty PropertyDTO if desired
   }
 
   public PropertyService(

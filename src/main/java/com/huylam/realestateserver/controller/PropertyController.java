@@ -111,40 +111,67 @@ public class PropertyController {
       ),
     }
   )
-  @GetMapping("/properties/details/{propertyId}")
-  public ResponseEntity<Object> getPropertyById(
-    @PathVariable(value = "propertyId", required = true) long id
-  ) {
-    Optional<Property> propertyData = propertyRepository.findById(id);
-    if (propertyData.isPresent()) {
-      try {
-        Property property = propertyData.get();
-        return new ResponseEntity<>(property, HttpStatus.OK);
-      } catch (Exception e) {
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      // Property propertyNull = new Property();
-      return new ResponseEntity<>(
-        "Property with id " + id + " not found",
-        HttpStatus.NOT_FOUND
-      );
-    }
+  @GetMapping("/properties/count")
+  public long countAllRealEstates() {
+    return propertyService.countAllPropertiesService();
   }
 
+  // @GetMapping("/properties/details/{propertyId}")
+  // public ResponseEntity<Object> getPropertyById(
+  //   @PathVariable(value = "propertyId", required = true) long id
+  // ) {
+  //   Optional<Property> propertyData = propertyRepository.findById(id);
+  //   if (propertyData.isPresent()) {
+  //     try {
+  //       Property property = propertyData.get();
+  //       return new ResponseEntity<>(property, HttpStatus.OK);
+  //     } catch (Exception e) {
+  //       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+  //     }
+  //   } else {
+  //     // Property propertyNull = new Property();
+  //     return new ResponseEntity<>(
+  //       "Property with id " + id + " not found",
+  //       HttpStatus.NOT_FOUND
+  //     );
+  //   }
+  // }
+
   @GetMapping("/properties/{propertyId}")
-  public ResponseEntity<PropertyDTO> getProperty(
-    @PathVariable long propertyId
+  public ResponseEntity<?> getProperty(
+    @PathVariable(value = "propertyId", required = true) long propertyId
   ) {
-    PropertyDTO property = propertyService.getPropertyDTOByIdService(
-      propertyId
-    ); // implement this method in your service layer to get the property by id
-    if (property == null) {
-      return ResponseEntity.notFound().build();
-    } else {
-      return ResponseEntity.ok(property);
+    Optional<Property> propertyData = propertyRepository.findById(propertyId);
+    if (propertyData.isPresent()) {
+      try {
+        PropertyDTO property = propertyService.getPropertyDTOByIdService(
+          propertyId
+        ); // Implement this method in your service layer to get the property by id
+        return ResponseEntity.ok(property);
+      } catch (Exception e) {
+        String errorMessage = "Something went wrong";
+        return ResponseEntity
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(errorMessage);
+      }
     }
+    String errorMessage = "Property with id " + propertyId + " not found";
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
   }
+
+  // @GetMapping("/properties/{propertyId}") //// OLD ERROR WITH NOT FOUND PROPERTY (Not showing not found message)
+  // public ResponseEntity<PropertyDTO> getProperty(
+  //   @PathVariable(value = "propertyId", required = true) long propertyId
+  // ) {
+  //   PropertyDTO property = propertyService.getPropertyDTOByIdService(
+  //     propertyId
+  //   ); // implement this method in your service layer to get the property by id
+  //   if (property == null) {
+  //     return ResponseEntity.notFound().build();
+  //   } else {
+  //     return ResponseEntity.ok(property);
+  //   }
+  // }
 
   @GetMapping("/properties/{propertyId}/similar")
   public ResponseEntity<List<PropertyDTO>> getSimilarProperties(
@@ -171,9 +198,9 @@ public class PropertyController {
     }
   }
 
-  @PostMapping("/create/{provinceId}/{id}/{userId}")
+  @PostMapping("/properties/create/{provinceId}/{districtId}/{userId}")
   public ResponseEntity<Object> createProperty(
-    @PathVariable("id") int id,
+    @PathVariable("districtId") int districtId,
     @PathVariable("provinceId") int provinceId,
     @PathVariable("userId") Long userId,
     @RequestBody Property paramProperty
@@ -182,7 +209,9 @@ public class PropertyController {
       Optional<Province> propertyProvince = provinceRepository.findById(
         provinceId
       );
-      Optional<District> propertyDistrict = districtRepository.findById(id);
+      Optional<District> propertyDistrict = districtRepository.findById(
+        districtId
+      );
       Optional<User> propertyUser = userRepository.findById(userId);
       if (propertyDistrict.isPresent() && propertyUser.isPresent()) {
         Property newProperty = new Property();
