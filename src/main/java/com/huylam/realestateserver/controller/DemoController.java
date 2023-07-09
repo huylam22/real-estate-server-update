@@ -9,12 +9,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/admin")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN', 'USER')")
 public class DemoController {
 
   @GetMapping
-  @PreAuthorize("hasAuthority('admin:read')")
+  @PreAuthorize("hasAuthority('user:read')")
   public String get() {
+    return "GET:: user controller";
+  }
+
+  @GetMapping("/all")
+  public String getAll() {
+    return "GET:: all controller";
+  }
+
+  @GetMapping("/test")
+  @PreAuthorize("hasAuthority('admin:read')")
+  public String getAdmin() {
     return "GET:: admin controller";
   }
 

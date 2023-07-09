@@ -5,9 +5,15 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.secretsmanager.AWSSecretsManager;
+import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
+import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
+import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 
 @Configuration
 public class AmazonConfig {
@@ -21,13 +27,26 @@ public class AmazonConfig {
   @Value("${cloud.aws.region.static}")
   private String region;
 
+  @Value("${cloud.aws.secretsmanager.enabled}")
+  private boolean secretsManagerEnabled;
+
   @Bean
   public AmazonS3 s3Client() {
     AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
     return AmazonS3ClientBuilder
       .standard()
       .withCredentials(new AWSStaticCredentialsProvider(credentials))
-      .withRegion("ap-southeast-1")
+      .withRegion(region)
+      .build();
+  }
+
+  @Bean
+  public AWSSecretsManager secretsManagerClient() {
+    AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+    return AWSSecretsManagerClientBuilder
+      .standard()
+      .withCredentials(new AWSStaticCredentialsProvider(credentials))
+      .withRegion(region)
       .build();
   }
 }

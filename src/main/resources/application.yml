@@ -1,6 +1,8 @@
 spring:
+  config:
+    import: optional:secrets.yml
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/real_estate?useSSL=false
+    url: jdbc:mysql://localhost:3306/real_estate
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,12 +18,13 @@ spring:
 
 cloud:
   aws:
-    credentials:
-
-    region:
-      static: ap-southeast-1
     stack:
       auto: false
+    secretsmanager:
+      enabled: true
+    secret-name: prod/realestateapp
+    region:
+      static: ap-southeast-1
 
 application:
   bucket:
@@ -32,4 +35,3 @@ application:
       expiration: 86400000 # 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
-

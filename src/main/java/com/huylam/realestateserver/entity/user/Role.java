@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @RequiredArgsConstructor
 public enum Role {
-  USER(Collections.emptySet()),
+  USER(Set.of(USER_READ, USER_CREATE, USER_UPDATE, USER_DELETE)),
   ADMIN(
     Set.of(
       ADMIN_READ,
