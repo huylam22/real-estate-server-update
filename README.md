@@ -68,13 +68,13 @@ To build and run the project, follow these steps:
 
 #Properties
 
-- PROD_DB_HOST=<YOUR DB HOST>
-- PROD_DB_PORT=DB <Your DB PORT>
-- PROD_DB_NAME=railway
-- PROD_DB_USERNAME=<Your DB USERNAME>
-- PROD_DB_PASSWORD= <Your DB PASSWORD>
-- cloud.aws.credentials.access-key=<Your AWS ACCESS KEY ID>
-- cloud.aws.credentials.secret-key=<Your AWS SECRET KEY>
+- PROD_DB_HOST= YOUR DB HOST
+- PROD_DB_PORT= DB Your DB PORT
+- PROD_DB_NAME= railway
+- PROD_DB_USERNAME= Your DB USERNAME
+- PROD_DB_PASSWORD= Your DB PASSWORD
+- cloud.aws.credentials.access-key= Your AWS ACCESS KEY ID
+- cloud.aws.credentials.secret-key= Your AWS SECRET KEY
 
 ## Acknowledgement
 
