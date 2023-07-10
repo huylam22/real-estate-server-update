@@ -1,4 +1,4 @@
-package com.huylam.realestateserver.auth;
+package com.huylam.realestateserver.entity.auth;
 
 import com.huylam.realestateserver.entity.user.Role;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,7 @@
-package com.huylam.realestateserver.auth;
+package com.huylam.realestateserver.entity.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.huylam.realestateserver.service.DTO.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class AuthenticationResponse {
 
   @JsonProperty("refresh_token")
   private String refreshToken;
+
+  private UserDTO user;
 }

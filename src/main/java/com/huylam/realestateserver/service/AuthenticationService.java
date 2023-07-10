@@ -1,16 +1,17 @@
 package com.huylam.realestateserver.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.huylam.realestateserver.auth.AuthenticationRequest;
-import com.huylam.realestateserver.auth.AuthenticationResponse;
-import com.huylam.realestateserver.auth.RegisterRequest;
 import com.huylam.realestateserver.config.auth.JwtService;
+import com.huylam.realestateserver.entity.auth.AuthenticationRequest;
+import com.huylam.realestateserver.entity.auth.AuthenticationResponse;
+import com.huylam.realestateserver.entity.auth.RegisterRequest;
 import com.huylam.realestateserver.entity.token.Token;
 import com.huylam.realestateserver.entity.token.TokenType;
 import com.huylam.realestateserver.entity.user.Role;
 import com.huylam.realestateserver.entity.user.User;
 import com.huylam.realestateserver.repository.auth.TokenRepository;
 import com.huylam.realestateserver.repository.auth.UserRepository;
+import com.huylam.realestateserver.service.DTO.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -71,12 +72,14 @@ public class AuthenticationService {
       )
     );
     var user = repository.findByEmail(request.getEmail()).orElseThrow();
+    UserDTO userDTO = new UserDTO(user); // Create UserDTO from User object
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
     return AuthenticationResponse
       .builder()
+      .user(userDTO) // Include the userDTO in the response
       .accessToken(jwtToken)
       .refreshToken(refreshToken)
       .build();
