@@ -67,11 +67,14 @@ To build and run the project, follow these steps:
 -> The application will be available at http://localhost:8080.
 
 #Properties
-PROD_DB_HOST=containers-us-west-194.railway.app
-PROD_DB_PORT=7043
-PROD_DB_NAME=railway
-PROD_DB_USERNAME=root
-PROD_DB_PASSWORD=KrhDopqtijqBD30Wx0eV
+
+- PROD_DB_HOST=<YOUR DB HOST>
+- PROD_DB_PORT=DB <Your DB PORT>
+- PROD_DB_NAME=railway
+- PROD_DB_USERNAME=<Your DB USERNAME>
+- PROD_DB_PASSWORD= <Your DB PASSWORD>
+- cloud.aws.credentials.access-key=<Your AWS ACCESS KEY ID>
+- cloud.aws.credentials.secret-key=<Your AWS SECRET KEY>
 
 ## Acknowledgement
 
