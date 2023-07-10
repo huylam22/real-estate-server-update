@@ -44,7 +44,7 @@ Security
 Accessing Swagger Documentation
 
 - Start the Spring Boot application.
-- Open your preferred web browser and go to http://localhost:8080/swagger-ui.html.
+- Open your preferred web browser and go to http://localhost:8080/swagger-ui/index.html#/.
 - You should now be redirected to the Swagger documentation for your API.
 - From here, you can explore the available API endpoints, read the API documentation, and even try out the endpoints directly from the Swagger UI.
 - If you want to access the Swagger API definition in JSON format, go to http://localhost:8080/v2/api-docs.
@@ -66,7 +66,7 @@ To build and run the project, follow these steps:
 
 -> The application will be available at http://localhost:8080.
 
-#Properties
+## Properties
 
 - PROD_DB_HOST= YOUR DB HOST
 - PROD_DB_PORT= DB Your DB PORT
