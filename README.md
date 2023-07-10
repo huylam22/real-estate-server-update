@@ -66,6 +66,13 @@ To build and run the project, follow these steps:
 
 -> The application will be available at http://localhost:8080.
 
+#Properties
+PROD_DB_HOST=containers-us-west-194.railway.app
+PROD_DB_PORT=7043
+PROD_DB_NAME=railway
+PROD_DB_USERNAME=root
+PROD_DB_PASSWORD=KrhDopqtijqBD30Wx0eV
+
 ## Acknowledgement
 
 We would like to thank the Spring community for providing a robust and flexible framework for building web applications. We would also like to thank our mentors and advisors for their guidance and support throughout the development process.

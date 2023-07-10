@@ -1,8 +1,8 @@
 package com.huylam.realestateserver.controller;
 
-import com.huylam.realestateserver.auth.AuthenticationRequest;
-import com.huylam.realestateserver.auth.AuthenticationResponse;
-import com.huylam.realestateserver.auth.RegisterRequest;
+import com.huylam.realestateserver.entity.auth.AuthenticationRequest;
+import com.huylam.realestateserver.entity.auth.AuthenticationResponse;
+import com.huylam.realestateserver.entity.auth.RegisterRequest;
 import com.huylam.realestateserver.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
