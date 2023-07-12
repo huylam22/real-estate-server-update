@@ -12,16 +12,21 @@ import com.huylam.realestateserver.entity.user.User;
 import com.huylam.realestateserver.repository.auth.TokenRepository;
 import com.huylam.realestateserver.repository.auth.UserRepository;
 import com.huylam.realestateserver.service.DTO.UserDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -65,23 +70,38 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(
-        request.getEmail(),
-        request.getPassword()
-      )
-    );
-    var user = repository.findByEmail(request.getEmail()).orElseThrow();
+    try {
+      authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+          request.getEmail(),
+          request.getPassword()
+        )
+      );
+    } catch (AuthenticationException e) {
+      // Handle authentication failure, e.g., incorrect user or password
+      throw new AuthenticationServiceException("Invalid email or password");
+    }
+
+    var user = repository
+      .findByEmail(request.getEmail())
+      .orElseThrow(() ->
+        new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+      );
+
     UserDTO userDTO = new UserDTO(user); // Create UserDTO from User object
+
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
+
     return AuthenticationResponse
       .builder()
       .user(userDTO) // Include the userDTO in the response
       .accessToken(jwtToken)
       .refreshToken(refreshToken)
+      .status(HttpStatus.OK.value())
       .build();
   }
 
