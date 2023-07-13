@@ -101,7 +101,6 @@ public class AuthenticationService {
       .user(userDTO) // Include the userDTO in the response
       .accessToken(jwtToken)
       .refreshToken(refreshToken)
-      .status(HttpStatus.OK.value())
       .build();
   }
 
