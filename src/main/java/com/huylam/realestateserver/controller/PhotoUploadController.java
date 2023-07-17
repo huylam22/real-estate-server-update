@@ -1,6 +1,8 @@
 package com.huylam.realestateserver.controller;
 
-import com.huylam.realestateserver.service.PropertyPhotoService;
+import com.huylam.realestateserver.entity.user.User;
+import com.huylam.realestateserver.repository.auth.UserRepository;
+import com.huylam.realestateserver.service.PhotoUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/v1/properties/photos")
-public class PropertyPhotoController {
+@RequestMapping("api/v1/photos")
+public class PhotoUploadController {
 
   @Autowired
-  private PropertyPhotoService propertyPhotoService;
+  private PhotoUploadService photoUploadService;
 
   @PostMapping("/upload/{propertyId}")
   public ResponseEntity<String> uploadFiles(
@@ -28,16 +30,24 @@ public class PropertyPhotoController {
   ) {
     String message = "";
     for (MultipartFile file : files) {
-      message += propertyPhotoService.uploadFile(file, propertyId) + " ";
+      message += photoUploadService.uploadFile(file, propertyId) + " ";
     }
     return ResponseEntity.status(HttpStatus.OK).body(message.trim());
+  }
+
+  @PostMapping("/upload-avatar")
+  public String uploadAvatar(
+    @RequestParam("file") MultipartFile file,
+    @RequestParam("email") String email
+  ) {
+    return photoUploadService.uploadAvatar(file, email);
   }
 
   @GetMapping("/download/{fileName}")
   public ResponseEntity<ByteArrayResource> downloadFile(
     @PathVariable String fileName
   ) {
-    byte[] data = propertyPhotoService.downloadFile(fileName);
+    byte[] data = photoUploadService.downloadFile(fileName);
     ByteArrayResource resource = new ByteArrayResource(data);
     return ResponseEntity
       .ok()
@@ -53,7 +63,7 @@ public class PropertyPhotoController {
   @DeleteMapping("/delete/{fileName}")
   public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
     return new ResponseEntity<>(
-      propertyPhotoService.deleteFile(fileName),
+      photoUploadService.deleteFile(fileName),
       HttpStatus.OK
     );
   }

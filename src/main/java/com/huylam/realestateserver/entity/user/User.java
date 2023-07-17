@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.huylam.realestateserver.entity.Property;
 import com.huylam.realestateserver.entity.token.Token;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,9 @@ public class User implements UserDetails {
   private String lastname;
   private String email;
   private String password;
+
+  @Column(name = "avatar_url")
+  private String avatar_url;
 
   @Enumerated(EnumType.STRING)
   private Role role;

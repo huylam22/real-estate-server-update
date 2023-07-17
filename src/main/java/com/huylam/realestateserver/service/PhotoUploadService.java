@@ -7,7 +7,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.huylam.realestateserver.entity.Property;
+import com.huylam.realestateserver.entity.user.User;
 import com.huylam.realestateserver.repository.PropertyRepository;
+import com.huylam.realestateserver.repository.auth.UserRepository;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,13 +23,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
-public class PropertyPhotoService {
+public class PhotoUploadService {
 
   @Value("${application.bucket.name}")
   private String bucketName;
 
   @Autowired
   PropertyRepository propertyRepository;
+
+  @Autowired
+  UserRepository userRepository;
 
   @Autowired
   private AmazonS3 s3Client;
@@ -52,6 +57,24 @@ public class PropertyPhotoService {
     property.setPropertyCoverPaths(coverPaths); // Set the updated list to the property
     propertyRepository.save(property); // Save the updated property entity to the database
     return "File uploaded : " + fileName;
+  }
+
+  public String uploadAvatar(MultipartFile file, String userEmail) {
+    User user = userRepository
+      .findByEmail(userEmail)
+      .orElseThrow(() ->
+        new ResourceNotFoundException("User not found: " + userEmail)
+      );
+
+    File fileObj = convertMultiPartFileToFile(file);
+    String fileName =
+      UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+    s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+    fileObj.delete();
+
+    user.setAvatar_url(fileName); // Set the updated avatar URL to the new file name
+    userRepository.save(user); // Save the updated user entity to the database
+    return "File uploaded: " + fileName;
   }
 
   public byte[] downloadFile(String fileName) {
