@@ -15,6 +15,7 @@ public class UserDTO {
   private String email;
   private String firstName;
   private String lastName;
+  private String avatar_url;
 
   @Autowired
   public UserDTO(User user) {
@@ -22,5 +23,6 @@ public class UserDTO {
     this.email = user.getEmail();
     this.firstName = user.getFirstname();
     this.lastName = user.getLastname();
+    this.avatar_url = user.getAvatar_url();
   }
 }
