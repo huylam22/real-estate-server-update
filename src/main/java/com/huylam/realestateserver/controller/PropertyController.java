@@ -12,6 +12,7 @@ import com.huylam.realestateserver.repository.auth.UserRepository;
 import com.huylam.realestateserver.service.DTO.PropertyDTO;
 import com.huylam.realestateserver.service.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -75,7 +76,7 @@ public class PropertyController {
       ),
     }
   )
-  @GetMapping({ "/properties", "/properties/" })
+  @GetMapping({ "/properties" })
   public ResponseEntity<List<PropertyDTO>> getAllProperties() {
     try {
       List<PropertyDTO> propertyDTOs =
@@ -85,6 +86,11 @@ public class PropertyController {
       // TODO: handle exception
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  @GetMapping("/properties/count")
+  public long countAllRealEstates() {
+    return propertyService.countAllPropertiesService();
   }
 
   @Operation(
@@ -111,35 +117,12 @@ public class PropertyController {
       ),
     }
   )
-  @GetMapping("/properties/count")
-  public long countAllRealEstates() {
-    return propertyService.countAllPropertiesService();
-  }
-
-  // @GetMapping("/properties/details/{propertyId}")
-  // public ResponseEntity<Object> getPropertyById(
-  //   @PathVariable(value = "propertyId", required = true) long id
-  // ) {
-  //   Optional<Property> propertyData = propertyRepository.findById(id);
-  //   if (propertyData.isPresent()) {
-  //     try {
-  //       Property property = propertyData.get();
-  //       return new ResponseEntity<>(property, HttpStatus.OK);
-  //     } catch (Exception e) {
-  //       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-  //     }
-  //   } else {
-  //     // Property propertyNull = new Property();
-  //     return new ResponseEntity<>(
-  //       "Property with id " + id + " not found",
-  //       HttpStatus.NOT_FOUND
-  //     );
-  //   }
-  // }
-
   @GetMapping("/properties/{propertyId}")
   public ResponseEntity<?> getProperty(
-    @PathVariable(value = "propertyId", required = true) long propertyId
+    @Parameter(description = "Id of property to be searched") @PathVariable(
+      value = "propertyId",
+      required = true
+    ) long propertyId
   ) {
     Optional<Property> propertyData = propertyRepository.findById(propertyId);
     if (propertyData.isPresent()) {
@@ -159,23 +142,17 @@ public class PropertyController {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
   }
 
-  // @GetMapping("/properties/{propertyId}") //// OLD ERROR WITH NOT FOUND PROPERTY (Not showing not found message)
-  // public ResponseEntity<PropertyDTO> getProperty(
-  //   @PathVariable(value = "propertyId", required = true) long propertyId
-  // ) {
-  //   PropertyDTO property = propertyService.getPropertyDTOByIdService(
-  //     propertyId
-  //   ); // implement this method in your service layer to get the property by id
-  //   if (property == null) {
-  //     return ResponseEntity.notFound().build();
-  //   } else {
-  //     return ResponseEntity.ok(property);
-  //   }
-  // }
-
+  @Operation(
+    summary = "Find Similar Land Type Property by ID",
+    description = "Returns list of similar properties based on land type",
+    tags = { "property-controller" }
+  )
   @GetMapping("/properties/{propertyId}/similar")
   public ResponseEntity<List<PropertyDTO>> getSimilarProperties(
-    @PathVariable(value = "propertyId", required = true) long id
+    @Parameter(description = "Id of property to be searched") @PathVariable(
+      value = "propertyId",
+      required = true
+    ) long id
   ) {
     Optional<Property> propertyData = propertyRepository.findById(id);
     if (propertyData.isPresent()) {
@@ -198,11 +175,44 @@ public class PropertyController {
     }
   }
 
+  @Operation(
+    summary = "Create Property",
+    description = "Creates a new property",
+    tags = { "property-controller" }
+  )
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "201",
+        description = "Property created successfully",
+        content = @Content(schema = @Schema(implementation = Property.class))
+      ),
+      @ApiResponse(
+        responseCode = "400",
+        description = "Invalid ID supplied",
+        content = @Content
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Province, District, or User not found",
+        content = @Content
+      ),
+      @ApiResponse(
+        responseCode = "422",
+        description = "Failed to create Property",
+        content = @Content
+      ),
+    }
+  )
   @PostMapping("/properties/create/{provinceId}/{districtId}/{userId}")
   public ResponseEntity<Object> createProperty(
-    @PathVariable("districtId") int districtId,
-    @PathVariable("provinceId") int provinceId,
-    @PathVariable("userId") Long userId,
+    @Parameter(description = "District ID") @PathVariable(
+      "districtId"
+    ) int districtId,
+    @Parameter(description = "Province ID") @PathVariable(
+      "provinceId"
+    ) int provinceId,
+    @Parameter(description = "User ID") @PathVariable("userId") Long userId,
     @RequestBody Property paramProperty
   ) {
     try {
@@ -274,6 +284,25 @@ public class PropertyController {
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
+  @Operation(
+    summary = "Update Property",
+    description = "Updates an existing property",
+    tags = { "property-controller" }
+  )
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "Property updated successfully",
+        content = @Content(schema = @Schema(implementation = Property.class))
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Property not found",
+        content = @Content
+      ),
+    }
+  )
   @CrossOrigin
   @PutMapping("/update/{id}")
   public ResponseEntity<Object> updateProperty(
@@ -317,11 +346,27 @@ public class PropertyController {
     }
   }
 
+  @Operation(
+    summary = "Delete Property",
+    description = "Deletes a property by ID",
+    tags = { "property-controller" }
+  )
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "204",
+        description = "Property deleted successfully"
+      ),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    }
+  )
   @CrossOrigin
-  @DeleteMapping("/delete/{id}")
-  public ResponseEntity<Object> deleteProperty(@PathVariable("id") Long id) {
+  @DeleteMapping("/delete/{propertyId}")
+  public ResponseEntity<Object> deleteProperty(
+    @PathVariable("propertyId") Long propertyId
+  ) {
     try {
-      propertyRepository.deleteById(id);
+      propertyRepository.deleteById(propertyId);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (Exception e) {
       System.out.println(e);
@@ -329,8 +374,21 @@ public class PropertyController {
     }
   }
 
-  // Xoá/delete tất cả  KHÔNG dùng service, sử dụng phương thức DELETE
-  @DeleteMapping("/admin/delete-all") // Dùng phương thức DELETE
+  @Operation(
+    summary = "Delete All Properties",
+    description = "Deletes all properties",
+    tags = { "property-controller" }
+  )
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "204",
+        description = "All properties deleted successfully"
+      ),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    }
+  )
+  @DeleteMapping("/admin/delete-all")
   public ResponseEntity<Property> deleteAllProperties() {
     try {
       propertyRepository.deleteAll();
@@ -341,3 +399,36 @@ public class PropertyController {
     }
   }
 }
+// @GetMapping("/properties/{propertyId}") //// OLD ERROR WITH NOT FOUND PROPERTY (Not showing not found message)
+// public ResponseEntity<PropertyDTO> getProperty(
+//   @PathVariable(value = "propertyId", required = true) long propertyId
+// ) {
+//   PropertyDTO property = propertyService.getPropertyDTOByIdService(
+//     propertyId
+//   ); // implement this method in your service layer to get the property by id
+//   if (property == null) {
+//     return ResponseEntity.notFound().build();
+//   } else {
+//     return ResponseEntity.ok(property);
+//   }
+// }
+// @GetMapping("/properties/details/{propertyId}")
+// public ResponseEntity<Object> getPropertyById(
+//   @PathVariable(value = "propertyId", required = true) long id
+// ) {
+//   Optional<Property> propertyData = propertyRepository.findById(id);
+//   if (propertyData.isPresent()) {
+//     try {
+//       Property property = propertyData.get();
+//       return new ResponseEntity<>(property, HttpStatus.OK);
+//     } catch (Exception e) {
+//       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//     }
+//   } else {
+//     // Property propertyNull = new Property();
+//     return new ResponseEntity<>(
+//       "Property with id " + id + " not found",
+//       HttpStatus.NOT_FOUND
+//     );
+//   }
+// }
